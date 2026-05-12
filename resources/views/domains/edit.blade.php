@@ -4,7 +4,7 @@
     </x-slot>
 
     <div class="max-w-2xl mx-auto px-6">
-        <form method="POST" action="{{ route('domains.update', $domain) }}" class="space-y-6">
+        <form method="POST" action="{{ route('domains.update', $domain) }}" class="space-y-6" id="domain-form">
             @csrf
             @method('PUT')
 
@@ -21,7 +21,7 @@
                 <div class="grid grid-cols-4 gap-3">
                     @foreach(['blue', 'green', 'red', 'purple', 'orange', 'yellow', 'pink', 'gray'] as $color)
                     <label class="cursor-pointer">
-                        <input type="radio" name="color" value="{{ $color }}" @checked(old('color', $domain->color) === $color) class="sr-only peer">
+                        <input type="radio" name="color" value="{{ $color }}" @checked(old('color', $domain->color) === $color) class="sr-only peer color-option">
                         <div class="px-4 py-3 rounded-xl text-center text-sm font-medium transition-all duration-200 peer-checked:ring-2 peer-checked:ring-[#4ce0d2] bg-{{ $color }}-100 text-{{ $color }}-800 hover:bg-{{ $color }}-200">
                             {{ ucfirst($color) }}
                         </div>
@@ -31,6 +31,18 @@
                 @error('color')
                     <p class="mt-2 text-sm text-[#ff7675]">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium text-[#b8d9d5] mb-4">Aperçu</label>
+                <div class="rounded-xl p-6 border" style="background: #136f63; border-color: rgba(255,255,255,0.08);">
+                    <div class="flex justify-between items-start">
+                        <h3 class="text-white font-semibold text-lg" id="preview-name">{{ $domain->name }}</h3>
+                        <span id="preview-badge" class="px-3 py-1 rounded-lg text-sm font-medium bg-{{ $domain->color }}-100 text-{{ $domain->color }}-800">
+                            {{ ucfirst($domain->color) }}
+                        </span>
+                    </div>
+                </div>
             </div>
 
             <div class="flex gap-4 pt-4">
@@ -43,4 +55,18 @@
             </div>
         </form>
     </div>
+
+    <script>
+    document.querySelectorAll('.color-option').forEach(input => {
+        input.addEventListener('change', function() {
+            const badge = document.getElementById('preview-badge');
+            badge.className = 'px-3 py-1 rounded-lg text-sm font-medium bg-' + this.value + '-100 text-' + this.value + '-800';
+            badge.textContent = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+        });
+    });
+
+    document.querySelector('input[name="name"]').addEventListener('input', function() {
+        document.getElementById('preview-name').textContent = this.value || 'Nom du domaine';
+    });
+    </script>
 </x-app-layout>

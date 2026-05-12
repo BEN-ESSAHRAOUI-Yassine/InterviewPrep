@@ -80,6 +80,8 @@ class ConceptController extends Controller
 
     public function updateStatus(Request $request, Concept $concept)
     {
+        $this->authorize('view', $concept->domain);
+
         $request->validate([
             'status' => 'required|in:to_review,in_progress,mastered',
         ]);
