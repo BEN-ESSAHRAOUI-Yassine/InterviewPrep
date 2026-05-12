@@ -11,12 +11,10 @@ class DomainController extends Controller
 {
     public function index()
     {
-        $domains = auth()->user()->domains()
-            ->withCount([
-                'concepts',
-                'concepts as mastered_count' => fn($q) => $q->where('status', 'mastered'),
-            ])
-            ->get();
+        $domains = Domain::withCount([
+            'concepts',
+            'concepts as mastered_count' => fn($q) => $q->where('status', 'mastered'),
+        ])->get();
 
         return view('domains.index', compact('domains'));
     }
@@ -30,7 +28,7 @@ class DomainController extends Controller
     {
         auth()->user()->domains()->create($request->validated());
 
-        return redirect()->route('domains.index')->with('success', 'Domaine créé avec succès.');
+        return redirect()->route('mes-domaines')->with('success', 'Domaine créé avec succès.');
     }
 
     public function show(Domain $domain)
@@ -58,7 +56,7 @@ class DomainController extends Controller
 
         $domain->update($request->validated());
 
-        return redirect()->route('domains.index')->with('success', 'Domaine mis à jour.');
+        return redirect()->route('mes-domaines')->with('success', 'Domaine mis à jour.');
     }
 
     public function destroy(Domain $domain)
@@ -67,6 +65,6 @@ class DomainController extends Controller
 
         $domain->delete();
 
-        return redirect()->route('domains.index')->with('success', 'Domaine supprimé.');
+        return redirect()->route('mes-domaines')->with('success', 'Domaine supprimé.');
     }
 }
