@@ -45,14 +45,43 @@
         <div class="rounded-xl p-6 border" style="background: #136f63; border-color: rgba(255,255,255,0.08);">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-lg font-semibold text-white">Questions générées</h3>
-                <button type="button" class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2" style="background: linear-gradient(135deg, #136f63, #22aaa1); color: #041b15;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter='brightness(1)'">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
-                    Générer des questions
-                </button>
+                <form action="{{ route('questions.store', [$domain, $concept]) }}" method="POST">
+                    @csrf
+                    <button type="submit" class="px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 flex items-center gap-2" style="background: linear-gradient(135deg, #136f63, #22aaa1); color: #041b15;" onmouseover="this.style.filter='brightness(1.08)'" onmouseout="this.style.filter='brightness(1)'">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                        </svg>
+                        Générer des questions
+                    </button>
+                </form>
             </div>
-            <p class="text-[#b8d9d5] text-sm">Les questions d'entretien pour ce concept apparaîtront ici.</p>
+            @if($concept->generatedQuestions->count() > 0)
+                <div class="space-y-4">
+                    @foreach($concept->generatedQuestions()->latest()->get() as $generation)
+                        <div class="rounded-lg p-4" style="background: rgba(0,0,0,0.2);">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm text-[#b8d9d5]">
+                                    Génération du {{ $generation->created_at->format('d/m/Y à H:i') }}
+                                </span>
+                                <form action="{{ route('questions.destroy', $generation) }}" method="POST" onsubmit="return confirm('Supprimer ce lot de questions ?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-[#ff7675] hover:text-[#ff7675]/80 text-sm font-medium">
+                                        Supprimer
+                                    </button>
+                                </form>
+                            </div>
+                            <ol class="list-decimal list-inside space-y-1">
+                                @foreach($generation->questions as $question)
+                                    <li class="text-white text-sm">{{ $question }}</li>
+                                @endforeach
+                            </ol>
+                        </div>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-[#b8d9d5] text-sm">Les questions d'entretien pour ce concept apparaîtront ici.</p>
+            @endif
         </div>
     </div>
 </x-app-layout>
