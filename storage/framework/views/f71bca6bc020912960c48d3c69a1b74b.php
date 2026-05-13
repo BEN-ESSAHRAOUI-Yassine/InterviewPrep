@@ -48,6 +48,18 @@
             </header>
 
             <div class="p-8">
+                <?php if(session('success')): ?>
+                    <div class="mb-4 px-4 py-3 rounded-lg bg-[#4ce0d2]/20 text-[#4ce0d2] border border-[#4ce0d2]/30">
+                        <?php echo e(session('success')); ?>
+
+                    </div>
+                <?php endif; ?>
+                <?php if(session('error')): ?>
+                    <div class="mb-4 px-4 py-3 rounded-lg bg-[#ff7675]/20 text-[#ff7675] border border-[#ff7675]/30">
+                        <?php echo e(session('error')); ?>
+
+                    </div>
+                <?php endif; ?>
                 <?php echo e($slot); ?>
 
             </div>
